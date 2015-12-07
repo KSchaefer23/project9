@@ -7,9 +7,6 @@ String names[]=  { "One", "Two", "Red", "Blue", "Fish" };
 String boatNames[]= {"Jenny", "Penny", "XPenny", "Kenny", "Denny" };
 Boat fleet[]= new Boat[many];
 float spacing;
-
-//Boat fleet=  new Boat();
-
 float surface;
 float moonX=0, moonY=100;
 int score=0;
@@ -32,8 +29,7 @@ void reset() {
     x += spacing;
   }
   for (int i=0; i<many; i++ ) {
-    fleet[i]=  new Boat( boatNames[i], x );
-    x += spacing;  
+    fleet[i]=  new Boat( boatNames[i]);
   }
 }
 
@@ -56,10 +52,14 @@ void draw() {
     fishReport( surface+50, school, school.length); } 
   if (key == 'L') {
     fishReport( surface+50, school, school.length); }    
-  else action();
-  show();
-  messages();
+  
+  else { 
+    action();
+    show();
+    messages();
+  }
 }
+
 void messages() {
   fill(0);
   textSize( 20 );
@@ -68,11 +68,6 @@ void messages() {
   text( "Hold B key to show all boats and fish", width/3, 40 );
   text( "BAM:  squids5.java", 10, height-10 );
   if (score>0) text( "SCORE:  "+score, width*3/4, 20 );
-  if (score>900) {
-    if (key == 'q') score=0;
-    text( "Maximum score.\nQUITTING NOW\nPress the 'q' key to continue", width/2, 140 );
-    if (score>10000) { exit(); }
-  }
 }
 
 //// METHODS TO MOVE & DRAW.
@@ -103,15 +98,12 @@ void action() {
 //// Display the squids in (sorted) order.
 void show() {
   float x=  spacing;
-  float xx= spacing;
   for (int i=0; i<many; i++ ) {
     school[i].x=  x;
     x += spacing;
     school[i].show();
   }
   for (int i=0; i<many; i++ ) {
-    fleet[i].x=  xx;
-    xx += spacing;
     fleet[i].show();
   }
 }
@@ -271,36 +263,15 @@ class Squid {
 
 class Boat {
   String name="";
-  float x=0, y=surface, dx=5;
+  float x, y=surface, dx=2;
   int cargo=0, caught=0;
   
-  Boat( String s, float x ) {
+  Boat(String s) {
     this.name=  s;
-    this.x=x;
+    x = random(0,width);
+    dx = random(-3, 3);
   }  
   
-  void move() {
-    //// Fish before move:  check each squid.
-    int caught=0;
-    for (int i=0; i<many; i++ ) {
-      if (school[i].hit( x, surface )) {
-        caught += school[i].legs;
-        school[i].bottom();
-      }
-    }
-    cargo += caught;    
-    //// Now, move the boat.
-    x += dx;
-    if (caught>0) x += 2*dx;      //  Jump after catch.
-    if (x<0) {
-      score += cargo;            // Add cargo to global score.
-      cargo=0;
-      dx = random( 1, 5 );      // Variable boat speed.
-    }
-    if (x>width)  {
-      dx = -random( 0.5, 3 );    // Slower return.
-    }
-  }
   //// Draw the boat.
   void show() {
     // Boat.
@@ -318,7 +289,28 @@ class Boat {
     fill(0);
     if (cargo>0) text( cargo, x+20, surface );
   }    
+  
+  void move() {
+    int caught=0;
+    x += dx;    
+    //// Fish before move:  check each squid.
+    for (int i=0; i<many; i++ ) {
+      if (school[i].hit( x, surface )) {
+        caught += school[i].legs;
+        school[i].bottom();
+      }
+    }
+    
+    if (caught>0) x += 2*dx;     //  Jump after catch.   
+    
+    if (x<0) {
+      cargo += caught;          
+      score += cargo;            // Add cargo to global score.
+      cargo=0;
+      dx = random( 1, 3 );      // Variable boat speed.
+    }    
+    if (x>width)  {
+      dx = -random( 0.5, 3 );    // Slower return.
+    }
+  }
 }
-
-
-
