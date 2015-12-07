@@ -3,10 +3,12 @@
 
 int many=5;
 Squid school[]=  new Squid[many];
-String names[]=  { "Otto", "Nono", "Deca", "Ariel", "Ursala" };
+String names[]=  { "One", "Two", "Red", "Blue", "Fish" };
+String boatNames[]= {"Jenny", "Penny", "XPenny", "Kenny", "Denny" };
+Boat fleet[]= new Boat[many];
 float spacing;
 
-Boat bounty=  new Boat();
+//Boat fleet=  new Boat();
 
 float surface;
 float moonX=0, moonY=100;
@@ -29,17 +31,31 @@ void reset() {
     school[i]=  new Squid( names[i], x );
     x += spacing;
   }
-  bounty.name=  "Bounty";
+  for (int i=0; i<many; i++ ) {
+    fleet[i]=  new Boat( boatNames[i], x );
+    x += spacing;  
+  }
 }
 
 
 //// NEXT FRAME:  scene, action
 void draw() {
   scene();
-  if (key >= 'A' && key <= 'Z') {
-    boatReport( 50, bounty, 1 );
-    fishReport( surface+50, school, school.length);
-  }
+  if (key == 'B') {
+    boatReport( 50, fleet, 1 ); }
+  if (key == 'D') {
+    boatReport( 50, fleet, 1 ); }
+  if (key == 'F') {
+    boatReport( 50, fleet, 1 ); }
+    
+  if (key == 'X') {
+    fishReport( surface+50, school, school.length); }
+  if (key == 'Y') {
+    fishReport( surface+50, school, school.length); } 
+  if (key == 'S') {
+    fishReport( surface+50, school, school.length); } 
+  if (key == 'L') {
+    fishReport( surface+50, school, school.length); }    
   else action();
   show();
   messages();
@@ -80,22 +96,29 @@ void action() {
   for (int i=0; i<many; i++ ) {
     school[i].move();
   }
-  bounty.move();
+  for (int i=0; i<many; i++ ) {
+    fleet[i].move();
+  }
 }
 //// Display the squids in (sorted) order.
 void show() {
   float x=  spacing;
+  float xx= spacing;
   for (int i=0; i<many; i++ ) {
     school[i].x=  x;
     x += spacing;
     school[i].show();
   }
-  bounty.show();
+  for (int i=0; i<many; i++ ) {
+    fleet[i].x=  xx;
+    xx += spacing;
+    fleet[i].show();
+  }
 }
 
 //// SUMMARIES:  List all objects in the array.
 // Display the properties of each object in the array.
-void boatReport( float top, Boat b, int many ) {
+void boatReport( float top, Boat[] b, int many ) {
   fill(255,200,200);
   rect( 50,top, width-100, 50 + 20*many );
   float x=70, y=top+20;
@@ -107,12 +130,14 @@ void boatReport( float top, Boat b, int many ) {
   text( "dx", x+205, y );
   fill(0);
   //
-  y += 15;
-  text( 1, x, y );
-  text( b.name, x+20, y );
-  text( b.cargo, x+70, y );
-  text( b.x, x+100, y );
-  text( b.dx, x+200, y );
+  for (int i=0; i<many; i++) {
+    y += 15;    // Next line.
+    text( i, x, y );
+    text( b[i].name, x+20, y );
+    text( b[i].cargo, x+70, y );
+    text( b[i].x, x+100, y );
+    text( b[i].dx, x+200, y );
+  }  
 }
 void fishReport( float top, Squid[] a, int many ) {
   fill(255,255,200);
@@ -248,6 +273,12 @@ class Boat {
   String name="";
   float x=0, y=surface, dx=5;
   int cargo=0, caught=0;
+  
+  Boat( String s, float x ) {
+    this.name=  s;
+    this.x=x;
+  }  
+  
   void move() {
     //// Fish before move:  check each squid.
     int caught=0;
@@ -286,11 +317,6 @@ class Boat {
     text( name, x+5, surface-10 );
     fill(0);
     if (cargo>0) text( cargo, x+20, surface );
-    // Smoke
-    fill( 50,50,50, 200 );
-    ellipse( x +20 -10*dx, surface-50, 20, 20 );
-    ellipse( x +20 -20*dx, surface-60, 15, 10 );
-    ellipse( x +20 -30*dx, surface-70, 8, 5 );
   }    
 }
 
