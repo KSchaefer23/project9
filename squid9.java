@@ -1,10 +1,7 @@
-//// squids5.java -- array of squid objects
-//// BAM:5c02c;  sample code for project 9
-
 int many=5;
 Squid school[]=  new Squid[many];
 String names[]=  { "One", "Two", "Red", "Blue", "Fish" };
-String boatNames[]= {"Jenny", "Penny", "XPenny", "Kenny", "Denny" };
+String boatNames[]= {"Jenny", "Penny", "XPenny", "Minnow", "Mimi" };
 Boat fleet[]= new Boat[many];
 float spacing;
 float surface;
@@ -17,12 +14,11 @@ void setup() {
   spacing=  width/(many+1);
   reset();
 }
-// Constuct squid(s).
+
 void reset() {
   surface=  random(  height/4, height/2 );
   moonY=  surface/3;
   moonY=  random( 200, surface+200 );
-  // Many squids.
   float x=  spacing;
   for (int i=0; i<many; i++ ) {
     school[i]=  new Squid( names[i], x );
@@ -33,29 +29,132 @@ void reset() {
   }
 }
 
+void sortBoatX(Boat[] a, int many) { 
+  for (int m = many; m > 1; m--) {
+    int k = 0;
+    for (int j = 1; j<m; j++) {
+      if (a[j].x > a[k].x) k = j;
+    }
+    boatSwap(a, m-1, k);
+  }
+}
+void sortBoatDX(Boat[] a, int many) { 
+  for (int m = many; m > 1; m--) {
+    int k = 0;
+    for (int j = 1; j<m; j++) {
+      if (a[j].dx < a[k].dx) k = j;
+    }
+    boatSwap(a, m-1, k);
+  }
+}
+void sortBoatCargo(Boat[] a, int many) { 
+  for (int m = many; m > 1; m--) {
+    int k = 0;
+    for (int j = 1; j<m; j++) {
+      if (a[j].cargo < a[k].cargo) k = j;
+    }
+    boatSwap(a, m-1, k);
+  }
+}
+
+void boatSwap(Boat[] a, int k, int j) {
+  float tmpX;
+  float tmpDX;
+  int tmpC;
+  String tmpN;
+
+  tmpX = a[k].x;
+  a[k].x = a[j].x;
+  a[j].x = tmpX;
+
+  tmpDX = a[k].dx;
+  a[k].dx = a[j].dx;
+  a[j].dx = tmpDX;
+
+  tmpC = a[k].cargo;
+  a[k].cargo = a[j].cargo;
+  a[j].cargo = tmpC;
+
+  tmpN = a[k].name;
+  a[k].name = a[j].name;
+  a[j].name = tmpN;
+}
+
+void sortSquidX(Squid[] a, int many) {
+  for (int m = many; m > 1; m--) {
+    int k = 0;
+    for (int j = 1; j<m; j++) {
+      if (a[j].x > a[k].x) k = j;
+    }
+    swapSquid(a, m-1, k);
+  }
+}
+void sortSquidY(Squid[] a, int many) {
+  for (int m = many; m > 1; m--) {
+    int k = 0;
+    for (int j = 1; j<m; j++) {
+      if (a[j].y > a[k].y) k = j;
+    }
+    swapSquid(a, m-1, k);
+  }
+}
+void sortSquidDY(Squid[] a, int many) {
+  for (int m = many; m > 1; m--) {
+    int k = 0;
+    for (int j = 1; j<m; j++) {
+      if (a[j].dy > a[k].dy) k = j;
+    } 
+    swapSquid(a, m-1, k);
+  }
+}
+void sortSquidL(Squid[] a, int many) {
+  for (int m = many; m > 1; m--) {
+    int k = 0;
+    for (int j = 1; j<m; j++) {
+      if (a[j].legs > a[k].legs) k = j;
+    }
+    swapSquid(a, m-1, k);
+  }
+}
+
+void swapSquid(Squid[] a, int k, int j) {
+  float tmpX;
+  float tmpY;
+  float tmpDY;
+  int tmpL;
+  String tmpN;
+
+  tmpX = a[k].x;
+  a[k].x = a[j].x;
+  a[j].x = tmpX;
+
+  tmpY = a[k].y;
+  a[k].y = a[j].y;
+  a[j].y = tmpY;
+
+  tmpDY = a[k].dy;
+  a[k].dy = a[j].dy;
+  a[j].dy = tmpDY;
+
+  tmpL = a[k].legs;
+  a[k].legs = a[j].legs;
+  a[j].legs = tmpL;
+
+  tmpN = a[k].name;
+  a[k].name = a[j].name;
+  a[j].name = tmpN;
+}
 
 //// NEXT FRAME:  scene, action
 void draw() {
   scene();
-  if (key == 'B') {
-    boatReport( 50, fleet, 1 ); }
-  if (key == 'D') {
-    boatReport( 50, fleet, 1 ); }
-  if (key == 'F') {
-    boatReport( 50, fleet, 1 ); }
-    
-  if (key == 'X') {
-    fishReport( surface+50, school, school.length); }
-  if (key == 'Y') {
-    fishReport( surface+50, school, school.length); } 
-  if (key == 'S') {
-    fishReport( surface+50, school, school.length); } 
-  if (key == 'L') {
-    fishReport( surface+50, school, school.length); }    
-  
+  show();
+  if (key >= 'A' && key <= 'Z') {
+    boatReport(200, fleet, fleet.length);
+    fishReport(400, school, school.length);
+    messages(); } 
   else { 
     action();
-    show();
     messages();
   }
 }
@@ -63,10 +162,17 @@ void draw() {
 void messages() {
   fill(0);
   textSize( 20 );
-  text( "Squid School", width/3, 20 );
+  text( "Gone Fishin'", width/2.5, 20 );
   textSize(12);
-  text( "Hold B key to show all boats and fish", width/3, 40 );
-  text( "BAM:  squids5.java", 10, height-10 );
+  text( "Hold B key to show boats in position order", 50, 40 );
+  text( "Hold D key to show boats in speed order", 50, 55 );
+  text( "Hold F key to show boats in cargo order", 50, 70 );
+  
+  text( "Hold X key to show fish in position order", width/2, 40 );
+  text( "Hold Y key to show fish in height order", width/2, 55 );
+  text( "Hold S key to show fish in speed order", width/2, 70 );
+  text( "Hold L key to show fish in leg number order", width/2, 85 );
+
   if (score>0) text( "SCORE:  "+score, width*3/4, 20 );
 }
 
@@ -111,14 +217,14 @@ void show() {
 //// SUMMARIES:  List all objects in the array.
 // Display the properties of each object in the array.
 void boatReport( float top, Boat[] b, int many ) {
-  fill(255,200,200);
-  rect( 50,top, width-100, 50 + 20*many );
+  fill(255,200,200,210);
+  rect( 50,top, width-100, 20*many );
   float x=70, y=top+20;
   // Labels.
   fill(150,0,0);
   text( "BOAT", x+20, y );
-  text( "cargo", x+70, y );
-  text( "x", x+105, y );
+  text( "Cargo", x+70, y );
+  text( "x", x+125, y );
   text( "dx", x+205, y );
   fill(0);
   //
@@ -127,18 +233,18 @@ void boatReport( float top, Boat[] b, int many ) {
     text( i, x, y );
     text( b[i].name, x+20, y );
     text( b[i].cargo, x+70, y );
-    text( b[i].x, x+100, y );
-    text( b[i].dx, x+200, y );
+    text( b[i].x, x+125, y );
+    text( b[i].dx, x+205, y );
   }  
 }
 void fishReport( float top, Squid[] a, int many ) {
-  fill(255,255,200);
-  rect( 50,top, width-100, 50 + 20*many );
+  fill(255,255,200, 200);
+  rect( 50,top, width-100, 20*many );
   float x=70, y=top+20;
   // Labels.
   fill(150,0,0);
-  text( "FISH", x+20, y );
-  text( "legs", x+70, y );
+  text( "Fish", x+20, y );
+  text( "Legs", x+70, y );
   text( "x", x+105, y );
   text( "y", x+205, y );
   text( "dy", x+305, y );
@@ -154,15 +260,31 @@ void fishReport( float top, Squid[] a, int many ) {
   }
 }
     
-
 //// EVENT HANDLERS:  keys, clicks ////
 void keyPressed() {
+  if (key == 'B') {
+    sortBoatX(fleet, fleet.length); }        // Position (x)
+  if (key == 'D') {
+    sortBoatDX(fleet, fleet.length ); }      // Speed (dx)
+  if (key == 'F') {
+    sortBoatCargo(fleet, fleet.length ); }   // X Cargo
+    
+  if (key == 'X') {
+    sortSquidX(school, school.length); }  // Position (x)
+  if (key == 'Y') {
+    sortSquidY(school, school.length); }  // Height (y)
+  if (key == 'S') {
+    sortSquidDY(school, school.length); }  // Speed (dy)
+  if (key == 'L') {
+    sortSquidL(school, school.length); }  // # Legs
+  
   if (key == 'r') reset();
   // Send a squid to the bottom!
   if (key == '0') school[0].bottom(); 
   if (key == '1') school[1].bottom(); 
   if (key == '2') school[2].bottom(); 
   if (key == '3') school[3].bottom(); 
+  if (key == '4') school[4].bottom();  
   //// Send highest to bottom.
   if (key == 'h') {
     int k=0;
@@ -185,9 +307,6 @@ void keyPressed() {
     }
   }
 }
-
-
-
 
 //// OBJECTS ////
 
@@ -272,24 +391,6 @@ class Boat {
     dx = random(-3, 3);
   }  
   
-  //// Draw the boat.
-  void show() {
-    // Boat.
-    fill(255,0,0);
-    noStroke();
-    rect( x, surface-20, 50, 20 );
-    if (dx>0)   triangle( x+50,surface, x+50,surface-20, x+70,surface-20 );
-    else        triangle( x,surface, x,surface-20, x-20,surface-20 );
-    rect( x+12, surface-30, 25, 10 );      // Cabin.
-    fill(0);
-    rect( x+20, surface-40, 10, 10 );      // Smokestack.
-    // Display name & cargo.
-    fill(255);
-    text( name, x+5, surface-10 );
-    fill(0);
-    if (cargo>0) text( cargo, x+20, surface );
-  }    
-  
   void move() {
     int caught=0;
     x += dx;    
@@ -301,10 +402,11 @@ class Boat {
       }
     }
     
+    cargo += caught;          
+    
     if (caught>0) x += 2*dx;     //  Jump after catch.   
     
     if (x<0) {
-      cargo += caught;          
       score += cargo;            // Add cargo to global score.
       cargo=0;
       dx = random( 1, 3 );      // Variable boat speed.
@@ -312,5 +414,26 @@ class Boat {
     if (x>width)  {
       dx = -random( 0.5, 3 );    // Slower return.
     }
-  }
+  }  
+  
+  //// Draw the boat.
+  void show() {
+    // Boat.
+    fill(255,0,0);
+    noStroke();
+    rect( x, surface-20, 50, 20 );
+    if (dx>0) { triangle( x+50,surface, x+50,surface-20, x+70,surface-20 ); }
+    else {      triangle( x,surface, x,surface-20, x-20,surface-20 ); }
+    rect( x+12, surface-30, 25, 10 );      // Cabin.
+    fill(0);
+    rect( x+20, surface-40, 10, 10 );      // Smokestack.
+    // Display name & cargo.
+    fill(255);
+    text( name, x+5, surface-10 );
+    fill(0);
+    text( cargo, x+20, surface );
+  }    
 }
+
+
+
