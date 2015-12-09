@@ -1,35 +1,49 @@
+//// Kevin Schaefer
+//// CST 112 Eve -- Project 9
+
 int many=5;
+
 Squid school[]=  new Squid[many];
 String names[]=  { "One", "Two", "Red", "Blue", "Fish" };
-String boatNames[]= {"Jenny", "Penny", "XPenny", "Minnow", "Mimi" };
+
 Boat fleet[]= new Boat[many];
+String boatNames[]= {"Jenny", "Penny", "XPenny", "Minnow", "Mimi" };
+
+Shark fins[]= new Shark[many];
+String sharkNames[]= {"Bruce", "Ripster", "Jab", "Streex", "Slammu" };
+
 float spacing;
 float surface;
 float moonX=0, moonY=100;
 int score=0;
 
-//// SETUP:  size & reset.
+//// Size & reset
 void setup() {
   size( 800, 600 );
   spacing=  width/(many+1);
   reset();
 }
 
+//// Reset function
 void reset() {
   surface=  random(  height/4, height/2 );
   moonY=  surface/3;
   moonY=  random( 200, surface+200 );
   float x=  spacing;
   for (int i=0; i<many; i++ ) {
-    school[i]=  new Squid( names[i], x );
+    school[i]=  new Squid( names[i], x );      // spaces squids evenly
     x += spacing;
   }
   for (int i=0; i<many; i++ ) {
-    fleet[i]=  new Boat( boatNames[i]);
+    fleet[i]=  new Boat( boatNames[i]);        // random boats
   }
+  for (int i=0; i<many; i++ ) {
+    fins[i]=  new Shark( sharkNames[i]);        // random boats
+  }   
 }
 
-void sortBoatX(Boat[] a, int many) { 
+//// Iterate and sort value functions for boat
+void sortBoatX(Boat[] a, int many) {         // Sorts the boats by X positions
   for (int m = many; m > 1; m--) {
     int k = 0;
     for (int j = 1; j<m; j++) {
@@ -38,7 +52,7 @@ void sortBoatX(Boat[] a, int many) {
     boatSwap(a, m-1, k);
   }
 }
-void sortBoatDX(Boat[] a, int many) { 
+void sortBoatDX(Boat[] a, int many) {        // Sorts the boats by DX values
   for (int m = many; m > 1; m--) {
     int k = 0;
     for (int j = 1; j<m; j++) {
@@ -47,7 +61,7 @@ void sortBoatDX(Boat[] a, int many) {
     boatSwap(a, m-1, k);
   }
 }
-void sortBoatCargo(Boat[] a, int many) { 
+void sortBoatCargo(Boat[] a, int many) {     // Sorts the boats by cargo amount
   for (int m = many; m > 1; m--) {
     int k = 0;
     for (int j = 1; j<m; j++) {
@@ -57,7 +71,7 @@ void sortBoatCargo(Boat[] a, int many) {
   }
 }
 
-void boatSwap(Boat[] a, int k, int j) {
+void boatSwap(Boat[] a, int k, int j) {      // Swaps the values inputted
   float tmpX;
   float tmpDX;
   int tmpC;
@@ -80,7 +94,8 @@ void boatSwap(Boat[] a, int k, int j) {
   a[j].name = tmpN;
 }
 
-void sortSquidX(Squid[] a, int many) {
+//// Iterate and sort value functions for boat
+void sortSquidX(Squid[] a, int many) {        // Sorts the squids by X positions
   for (int m = many; m > 1; m--) {
     int k = 0;
     for (int j = 1; j<m; j++) {
@@ -89,7 +104,7 @@ void sortSquidX(Squid[] a, int many) {
     swapSquid(a, m-1, k);
   }
 }
-void sortSquidY(Squid[] a, int many) {
+void sortSquidY(Squid[] a, int many) {        // Sorts the squids by Y positions
   for (int m = many; m > 1; m--) {
     int k = 0;
     for (int j = 1; j<m; j++) {
@@ -98,7 +113,7 @@ void sortSquidY(Squid[] a, int many) {
     swapSquid(a, m-1, k);
   }
 }
-void sortSquidDY(Squid[] a, int many) {
+void sortSquidDY(Squid[] a, int many) {       // Sorts the squids by DY values
   for (int m = many; m > 1; m--) {
     int k = 0;
     for (int j = 1; j<m; j++) {
@@ -107,7 +122,7 @@ void sortSquidDY(Squid[] a, int many) {
     swapSquid(a, m-1, k);
   }
 }
-void sortSquidL(Squid[] a, int many) {
+void sortSquidL(Squid[] a, int many) {        // Sorts the squids by leg number
   for (int m = many; m > 1; m--) {
     int k = 0;
     for (int j = 1; j<m; j++) {
@@ -117,7 +132,7 @@ void sortSquidL(Squid[] a, int many) {
   }
 }
 
-void swapSquid(Squid[] a, int k, int j) {
+void swapSquid(Squid[] a, int k, int j) {    // Swaps the values inputted
   float tmpX;
   float tmpY;
   float tmpDY;
@@ -145,26 +160,28 @@ void swapSquid(Squid[] a, int k, int j) {
   a[j].name = tmpN;
 }
 
-//// NEXT FRAME:  scene, action
+//// DRAW:  scene, show, action, messages, report
 void draw() {
   scene();
   show();
-  if (key >= 'A' && key <= 'Z') {
-    boatReport(200, fleet, fleet.length);
-    fishReport(400, school, school.length);
+  if (key >= 'A' && key <= 'Z') {              // Shows report if any caps pressed
+    boatReport(100, fleet, fleet.length);      // while stopping action
+    fishReport(200, school, school.length);
+    //sharkReport(300, fins, fins.length);     *** UNCOMMENT TO SEE SHARK REPORT ***
     messages(); } 
-  else { 
+  else {                                       // Runs action if no caps pressed
     action();
     messages();
   }
 }
 
+//// Display instructions, title, and score
 void messages() {
   fill(0);
   textSize( 20 );
-  text( "Gone Fishin'", width/2.5, 20 );
+  text( "Gone Fishin'", width/2.5, 20 );  // Title
   textSize(12);
-  text( "Hold B key to show boats in position order", 50, 40 );
+  text( "Hold B key to show boats in position order", 50, 40 );    // Instructions
   text( "Hold D key to show boats in speed order", 50, 55 );
   text( "Hold F key to show boats in cargo order", 50, 70 );
   
@@ -173,14 +190,14 @@ void messages() {
   text( "Hold S key to show fish in speed order", width/2, 70 );
   text( "Hold L key to show fish in leg number order", width/2, 85 );
 
-  if (score>0) text( "SCORE:  "+score, width*3/4, 20 );
+  if (score>0) text( "SCORE:  "+score, width*3/4, 20 );    // Score
 }
 
 //// METHODS TO MOVE & DRAW.
 void scene() {
   background( 50,150,200 );      // Dark sky.
   // Moon
-  if (moonX > width+100) {
+  if (moonX > width+100) {       // Moon
     moonX=  -100;
     moonY=  random( 100, surface+50 );
   }
@@ -192,16 +209,21 @@ void scene() {
   noStroke();
   rect( 0,surface, width, height-surface );  
 }
+
+//// Moves the squid and boats
 void action() {
-  // Move squids & boats.
-  for (int i=0; i<many; i++ ) {
+  for (int i=0; i<many; i++ ) {    // Squids
     school[i].move();
   }
-  for (int i=0; i<many; i++ ) {
+  for (int i=0; i<many; i++ ) {    // Boats
     fleet[i].move();
   }
+  for (int i=0; i<many; i++ ) {    // Sharks
+    fins[i].move();
+  }
 }
-//// Display the squids in (sorted) order.
+
+//// Show the squids in (sorted) order and show boats
 void show() {
   float x=  spacing;
   for (int i=0; i<many; i++ ) {
@@ -212,23 +234,27 @@ void show() {
   for (int i=0; i<many; i++ ) {
     fleet[i].show();
   }
+  /*
+  for (int i=0; i<many; i++ ) {      ***UNCOMMENT TO SEE SHARKS***
+    fins[i].show();
+  }
+  */
 }
 
-//// SUMMARIES:  List all objects in the array.
-// Display the properties of each object in the array.
+// Creates the report of boat properties
 void boatReport( float top, Boat[] b, int many ) {
   fill(255,200,200,210);
   rect( 50,top, width-100, 20*many );
   float x=70, y=top+20;
   // Labels.
   fill(150,0,0);
-  text( "BOAT", x+20, y );
+  text( "Boat", x+20, y );
   text( "Cargo", x+70, y );
-  text( "x", x+125, y );
-  text( "dx", x+205, y );
+  text( "X", x+125, y );
+  text( "DX", x+205, y );
   fill(0);
   //
-  for (int i=0; i<many; i++) {
+  for (int i=0; i<many; i++) {      // Iterates through boat index to display
     y += 15;    // Next line.
     text( i, x, y );
     text( b[i].name, x+20, y );
@@ -237,6 +263,8 @@ void boatReport( float top, Boat[] b, int many ) {
     text( b[i].dx, x+205, y );
   }  
 }
+
+// Creates the report of squid properties
 void fishReport( float top, Squid[] a, int many ) {
   fill(255,255,200, 200);
   rect( 50,top, width-100, 20*many );
@@ -245,11 +273,11 @@ void fishReport( float top, Squid[] a, int many ) {
   fill(150,0,0);
   text( "Fish", x+20, y );
   text( "Legs", x+70, y );
-  text( "x", x+105, y );
-  text( "y", x+205, y );
-  text( "dy", x+305, y );
+  text( "X", x+105, y );
+  text( "Y", x+205, y );
+  text( "DY", x+305, y );
   fill(0);
-  for (int i=0; i<many; i++) {
+  for (int i=0; i<many; i++) {    // Iterates through squid index to display
     y += 15;    // Next line.
     text( i, x, y );
     text( a[i].name, x+20, y );
@@ -259,27 +287,50 @@ void fishReport( float top, Squid[] a, int many ) {
     text( a[i].dy, x+300, y );
   }
 }
+  
+// Creates the report of shark properties
+void sharkReport( float top, Shark[] c, int many ) {
+  fill(0,255,255,210);
+  rect( 50,top, width-100, 20*many );
+  float x=70, y=top+20;
+  // Labels.
+  fill(150,0,0);
+  text( "Shark", x+20, y );
+  text( "X", x+70, y );
+  text( "Y", x+125, y );
+  text( "DX", x+205, y );
+  fill(0);
+  //
+  for (int i=0; i<many; i++) {      // Iterates through shark index to display
+    y += 15;    // Next line.
+    text( i, x, y );
+    text( c[i].name, x+20, y );
+    text( c[i].x, x+70, y );
+    text( c[i].y, x+125, y );
+    text( c[i].dx, x+205, y );
+  }  
+}    
     
-//// EVENT HANDLERS:  keys, clicks ////
+//// EVENT HANDLERS:  keys & clicks 
 void keyPressed() {
   if (key == 'B') {
-    sortBoatX(fleet, fleet.length); }        // Position (x)
+    sortBoatX(fleet, fleet.length); }        // Sort position (x)
   if (key == 'D') {
-    sortBoatDX(fleet, fleet.length ); }      // Speed (dx)
+    sortBoatDX(fleet, fleet.length ); }      // Sort speed (dx)
   if (key == 'F') {
-    sortBoatCargo(fleet, fleet.length ); }   // X Cargo
+    sortBoatCargo(fleet, fleet.length ); }   // Sort # cargo
     
   if (key == 'X') {
-    sortSquidX(school, school.length); }  // Position (x)
+    sortSquidX(school, school.length); }     // Sort position (x)
   if (key == 'Y') {
-    sortSquidY(school, school.length); }  // Height (y)
+    sortSquidY(school, school.length); }     // Sort height (y)
   if (key == 'S') {
-    sortSquidDY(school, school.length); }  // Speed (dy)
+    sortSquidDY(school, school.length); }    // Sort speed (dy)
   if (key == 'L') {
-    sortSquidL(school, school.length); }  // # Legs
+    sortSquidL(school, school.length); }     // Sort # legs
   
   if (key == 'r') reset();
-  // Send a squid to the bottom!
+  // Sends squid to the bottom!
   if (key == '0') school[0].bottom(); 
   if (key == '1') school[1].bottom(); 
   if (key == '2') school[2].bottom(); 
@@ -289,19 +340,19 @@ void keyPressed() {
   if (key == 'h') {
     int k=0;
     for (int i=1; i<many; i++ ) {
-      if (school[i].y < school[k].y) k=i;           // k is index of highert.
+      if (school[i].y < school[k].y) k=i;    // k is index of highest.
     }
     school[k].bottom();     
   }
   // Cheat codes:
   //// Send all to top or bottom.
   if (key == 'b') {
-    for (int k=0; k<many; k++ ) {
+    for (int k=0; k<many; k++ ) {    // to the bottom
       school[k].bottom();     
     }
   }
   if (key == 't') {
-    for (int k=0; k<many; k++ ) {
+    for (int k=0; k<many; k++ ) {    // to the top
       school[k].y=  surface+10;
       school[k].dy=  -0.1  ;
     }
@@ -309,7 +360,6 @@ void keyPressed() {
 }
 
 //// OBJECTS ////
-
 class Squid {
   float x,y;        // Coordinates
   float dx=0,dy=0;  // Speed
@@ -352,10 +402,6 @@ class Squid {
     stroke(r,g,b);
     ellipse( x,y, w,h );         // round top
     rect( x-w/2,y, w,h/2 );      // flat bottom
-    fill(255);
-    float blink=10;
-    if ( y%100 > 80) blink=2;
-    ellipse( x,y-h/4, 10, blink );     // eye
     // Legs
     fill(r,g,b);                 // legs.
     float legX=  x-w/2, foot=0;
@@ -379,19 +425,19 @@ class Squid {
   }
 }
 
-
+//// Begin boat class
 class Boat {
   String name="";
-  float x, y=surface, dx=2;
+  float x, y=surface, dx=2; // initial properties
   int cargo=0, caught=0;
   
-  Boat(String s) {
+  Boat(String s) {          // assign name, random x and dx
     this.name=  s;
     x = random(0,width);
     dx = random(-3, 3);
   }  
   
-  void move() {
+  void move() {            // creates movement, determines cargo, speed & direction
     int caught=0;
     x += dx;    
     //// Fish before move:  check each squid.
@@ -416,9 +462,9 @@ class Boat {
     }
   }  
   
-  //// Draw the boat.
+  //// Draw the boat
   void show() {
-    // Boat.
+    // Boat
     fill(255,0,0);
     noStroke();
     rect( x, surface-20, 50, 20 );
@@ -436,4 +482,56 @@ class Boat {
 }
 
 
+//// Begin shark class
+class Shark {
+  String name="";
+  float x,   dx=2; // initial properties
+  float y; 
+  int cargo=0, caught=0;
+  
+  Shark(String s) {          // assign name, random x and dx
+    this.name=  s;
+    x = random(0,width);
+    y = random(surface+30, height);
+    dx = random(-3, 3);
+  }  
+  
+  void move() {                // creates shark movement, speed & direction
+    x += dx;    
+        
+    if (caught>0) x += 2*dx;   //  Jump after catch.   
+    
+    if (x<0) {
+      dx = random( 1, 4 );     // Shark speed
+    }    
+    if (x>width)  {
+      dx = -random( 1, 4 );    // Return.
+    }
+  }  
+  
+  //// Draw the shark
+  void show() {
+    // Shark
+    fill(165,165,165);
+    noStroke();
+    ellipse( x, y-20, 80, 20 );
+    if (dx>0) {                                   // FACING RIGHT //
+      triangle( x,y-5, x,y-20, x+20,y-20 );       // Bottom fin
+      triangle( x+5,y-20, x,y-38, x+30,y-20 );    // Dorsal fin
+      triangle(x-35,y-20, x-45,y-40, x-45,y);     // Tail
+      fill(0);
+      ellipse(x+28,y-23,3,3);                     // Eyes
+    }
+    else {                                        // FACING LEFT //
+      triangle( x,y-5, x,y-20, x-20,y-20 );       // Bottom fin
+      triangle( x-5,y-20, x,y-38, x-30,y-20 );    // Dorsal fin
+      triangle(x+35,y-20, x+45,y-40, x+45,y);     // Tail      
+      fill(0);
+      ellipse(x-28,y-23,3,3);                     // Eyes
+    }
+    fill(255);
+    text( name, x-15, y-15 );
+    fill(0);
+  }    
+}
 
