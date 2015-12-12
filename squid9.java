@@ -26,6 +26,7 @@ void setup() {
 
 //// Reset function
 void reset() {
+  score=0;
   surface=  random(  height/4, height/2 );
   moonY=  surface/3;
   moonY=  random( 200, surface+200 );
@@ -182,12 +183,12 @@ void messages() {
   text( "Gone Fishin'", width/2.5, 20 );  // Title
   textSize(12);
   text( "Hold B key to show boats in position order", 50, 40 );    // Instructions
-  text( "Hold D key to show boats in speed order", 50, 55 );
+  text( "Hold D key to show boats in speed order (from + to -)", 50, 55 );
   text( "Hold F key to show boats in cargo order", 50, 70 );
   
   text( "Hold X key to show fish in position order", width/2, 40 );
   text( "Hold Y key to show fish in height order", width/2, 55 );
-  text( "Hold S key to show fish in speed order", width/2, 70 );
+  text( "Hold S key to show fish in speed order (from + to -)", width/2, 70 );
   text( "Hold L key to show fish in leg number order", width/2, 85 );
 
   if (score>0) text( "SCORE:  "+score, width*3/4, 20 );    // Score
@@ -440,7 +441,7 @@ class Boat {
   void move() {            // creates movement, determines cargo, speed & direction
     int caught=0;
     x += dx;    
-    //// Fish before move:  check each squid.
+    //// Checks for a hit, adds to caught, sends squid to bottom
     for (int i=0; i<many; i++ ) {
       if (school[i].hit( x, surface )) {
         caught += school[i].legs;
@@ -455,7 +456,7 @@ class Boat {
     if (x<0) {
       score += cargo;            // Add cargo to global score.
       cargo=0;
-      dx = random( 1, 3 );      // Variable boat speed.
+      dx = random( 1, 3 );       // Variable boat speed.
     }    
     if (x>width)  {
       dx = -random( 0.5, 3 );    // Slower return.
@@ -481,7 +482,6 @@ class Boat {
   }    
 }
 
-
 //// Begin shark class
 class Shark {
   String name="";
@@ -496,17 +496,13 @@ class Shark {
     dx = random(-3, 3);
   }  
   
-  void move() {                // creates shark movement, speed & direction
+  void move() {                   // creates shark movement, speed & direction
     x += dx;    
-        
-    if (caught>0) x += 2*dx;   //  Jump after catch.   
-    
+    if (caught>0) { x += 2*dx; }  //  Jump after catch.   
     if (x<0) {
-      dx = random( 1, 4 );     // Shark speed
-    }    
+      dx = random( 1, 4 ); }      // Shark speed    }    
     if (x>width)  {
-      dx = -random( 1, 4 );    // Return.
-    }
+      dx = -random( 1, 4 ); }     // Return.
   }  
   
   //// Draw the shark
@@ -534,4 +530,3 @@ class Shark {
     fill(0);
   }    
 }
-
